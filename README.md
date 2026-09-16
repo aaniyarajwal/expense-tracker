@@ -1,45 +1,69 @@
- 💸 Spendly - Expense Tracker
+# 💸 Spendly - Expense Tracker
 
-A web-based expense tracker built with Python Flask and SQLite.
+A modern web-based expense tracker built using **Python Flask, SQLite, HTML, CSS and JavaScript**.
 
- 🚀 Live Demo
+Spendly helps users manage their daily expenses, track spending patterns, and get a quick overview of their finances.
 
-👉 [Try Spendly](https://expense-tracker-1d0w.onrender.com)
+## 🚀 Live Demo
 
- ✨ Features
+👉 **[Try Spendly](https://expense-tracker-1d0w.onrender.com)**
 
-- Add, edit and delete expenses
-- Track total spending
-- Category-wise spending
-- Search and filter expenses
-- Spending overview chart
-- Date tracking
-- Dark mode
-- Responsive design
+## ✨ Features
 
-🛠️ Tech Stack
+- ➕ Add expenses
+- ✏️ Edit expenses
+- 🗑️ Delete expenses
+- 💰 Track total spending
+- 📊 Category-wise spending overview
+- 🔎 Search expenses
+- 🏷️ Filter by category
+- 📅 Track expense dates
+- 🌙 Dark mode
+- 📱 Responsive design
+- 📈 Spending visualization
 
-- Python
-- Flask
-- SQLite
-- HTML
-- CSS
-- JavaScript
+## 🛠️ Tech Stack
 
- 📂 Project Structure
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** Python, Flask
+- **Database:** SQLite
+- **Deployment:** Render
 
-expense-tracker/
+## 📸 Preview
+
+### Dashboard
+
+![Spendly Dashboard](ss/dashboard.png)
+
+### Add Expense
+
+![Add Expense](ss/add-expense.png)
+
+## 📂 Project Structure
+
+```text
+expensetracker/
+│
 ├── app.py
 ├── requirements.txt
 ├── Procfile
+├── README.md
+│
 ├── templates/
 │   ├── index.html
 │   └── edit.html
-└── static/
-    └── style.css
+│
+├── static/
+│   └── style.css
+│
+└── ss/
+    ├── dashboard.png
+    └── add-expense.png
+## ▶️ Run Locally
 
- ▶️ Run Locally
+### 1. Clone the repository
 
 ```bash
+git clone https://github.com/aaniyarajwal/expense-tracker.git
+cd expense-tracker
 pip install -r requirements.txt
-python app.py
