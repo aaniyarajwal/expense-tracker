@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Spendly | Expense Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header>
+            <div>
+                <h1>Spendly<span>.</span></h1>
+                <p>Track your money. Understand your spending.</p>
+            </div>
+
+            <button class="theme-btn" onclick="toggleTheme()">
+                🌙
+            </button>
+        </header>
+
+
+        <!-- Summary -->
+        <section class="summary">
+
+            <div class="card total-card">
+                <p>Total Spent</p>
+                <h2>₹{{ "%.2f"|format(total) }}</h2>
+                <span>💸 Your overall expenses</span>
+            </div>
+
+            <div class="card">
+                <p>Transactions</p>
+                <h2>{{ expenses|length }}</h2>
+                <span>🧾 Recorded expenses</span>
+            </div>
+
+            <div class="card">
+                <p>Average</p>
+
+                {% if expenses|length > 0 %}
+                    <h2>
+                        ₹{{ "%.2f"|format(total / expenses|length) }}
+                    </h2>
+                {% else %}
+                    <h2>₹0.00</h2>
+                {% endif %}
+
+                <span>📊 Per transaction</span>
+            </div>
+
+        </section>
+
+                <!-- Spending Overview -->
+        <section class="chart-card">
+
+            <div class="section-title">
+                <div>
+                    <h2>Spending Overview</h2>
+                    <p>See where your money is going</p>
+                </div>
+
+                <div class="chart-icon">📊</div>
+            </div>
+
+            <div id="spendingChart"></div>
+
+        </section>
+
+        <!-- Main Content -->
+        <div class="main">
+
+            <!-- Add Expense -->
+            <!-- Add Expense Button -->
+<section class="add-expense-card">
+
+    <div>
+        <h2>Ready to log an expense?</h2>
+        <p>Keep your spending organized, one transaction at a time.</p>
+    </div>
+
+    <button class="open-modal-btn" onclick="openModal()">
+        ＋ Add Expense
+    </button>
+
+</section>
+                        
+
+
+            <!-- Recent Expenses -->
+            <section class="expenses-card">
+
+                <div class="section-title">
+
+                    <div>
+                        <h2>Recent Expenses</h2>
+                        <p>Your latest transactions</p>
+                    </div>
+
+                    <div class="count">
+                        {{ expenses|length }}
+                    </div>
+
+                </div>
+
+<div class="filters">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔎 Search expenses..."
+        onkeyup="filterExpenses()"
+    >
+
+    <select id="categoryFilter" onchange="filterExpenses()">
+        <option value="all">All Categories</option>
+        <option value="Food">🍔 Food</option>
+        <option value="Travel">🚗 Travel</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Entertainment">🎮 Entertainment</option>
+        <option value="Education">📚 Education</option>
+        <option value="Health">💊 Health</option>
+        <option value="Technology">💻 Technology</option>
+        <option value="Other">📦 Other</option>
+    </select>
+
+</div>
+                <div class="expense-list">
+
+                    {% if expenses %}
+
+                        {% for expense in expenses %}
+
+                        <div class="expense"
+                            data-description="{{ expense.description|lower }}"
+                             data-category="{{ expense.category|lower }}">
+
+                            <div class="expense-icon">
+                                {{ expense.category[:2] }}
+                            </div>
+
+                            <div class="expense-info">
+
+    <strong>
+        {{ expense.description }}
+    </strong>
+
+    <span>
+        {{ expense.category }}
+    </span>
+
+    <small>
+        📅 {{ expense.date }}
+    </small>
+
+</div>
+
+
+                            <div class="expense-right">
+
+    <strong>
+        -₹{{ "%.2f"|format(expense.amount) }}
+    </strong>
+
+    <div class="expense-actions">
+
+        <a
+            class="edit"
+            href="/edit/{{ expense.id }}"
+        >
+            Edit
+        </a>
+
+        <a
+            class="delete"
+            href="/delete/{{ expense.id }}"
+            onclick="return confirm('Delete this expense?')"
+        >
+            Delete
+        </a>
+
+    </div>
+
+</div>
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty">
+
+                            <div class="empty-icon">💸</div>
+
+                            <h3>No expenses yet</h3>
+
+                            <p>
+                                Your wallet is suspiciously healthy 👀
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+<!-- Add Expense Modal -->
+
+<div class="modal-overlay" id="expenseModal">
+
+    <div class="modal">
+
+        <button class="close-modal" onclick="closeModal()">
+            ×
+        </button>
+
+        <div class="modal-header">
+            <div>
+                <h2>Add Expense</h2>
+                <p>Where did your money go?</p>
+            </div>
+
+            <div class="modal-icon">
+                💸
+            </div>
+        </div>
+
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label>Amount</label>
+
+                <div class="input-box">
+
+                    <span>₹</span>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        placeholder="0.00"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Category</label>
+
+                <select name="category" required>
+
+                    <option value="">Choose a category</option>
+
+                    <option value="🍔 Food">🍔 Food</option>
+                    <option value="🚗 Travel">🚗 Travel</option>
+                    <option value="🛍️ Shopping">🛍️ Shopping</option>
+                    <option value="🎮 Entertainment">🎮 Entertainment</option>
+                    <option value="📚 Education">📚 Education</option>
+                    <option value="💊 Health">💊 Health</option>
+                    <option value="💻 Technology">💻 Technology</option>
+                    <option value="📦 Other">📦 Other</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <input
+                    type="text"
+                    name="description"
+                    placeholder="What did you spend on?"
+                    required
+                >
+
+            </div>
+<div class="form-group">
+
+    <label>Date</label>
+
+    <input
+        type="date"
+        name="date"
+        value="{{ '' }}"
+        required
+    >
+
+</div>
+
+            <button class="add-btn" type="submit">
+                Add Expense →
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+    <!-- Dark Mode -->
+    <script>
+
+function toggleTheme() {
+
+    document.body.classList.toggle("dark");
+
+}
+
+
+function filterExpenses() {
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const category =
+        document.getElementById("categoryFilter")
+        .value
+        .toLowerCase();
+
+    const expenses =
+        document.querySelectorAll(".expense");
+
+
+    expenses.forEach(expense => {
+
+        const description =
+            expense.dataset.description;
+
+        const expenseCategory =
+            expense.dataset.category;
+
+
+        const matchesSearch =
+            description.includes(search);
+
+        const matchesCategory =
+            category === "all" ||
+            expenseCategory.includes(category);
+
+
+        if (matchesSearch && matchesCategory) {
+
+            expense.style.display = "flex";
+
+        } else {
+
+            expense.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   ADD EXPENSE MODAL
+========================= */
+
+function openModal() {
+
+    document
+        .getElementById("expenseModal")
+        .classList.add("active");
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById("expenseModal")
+        .classList.remove("active");
+
+}
+
+
+/* Close modal when clicking outside */
+
+document
+    .getElementById("expenseModal")
+    .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+
+            closeModal();
+
+        }
+
+    });
+
+
+/* =========================
+   SPENDING CHART
+========================= */
+
+const categoryData = {{ category_totals | tojson | safe }};
+
+const chart = document.getElementById("spendingChart");
+
+const categories = Object.entries(categoryData);
+
+
+if (categories.length === 0) {
+
+    chart.innerHTML = `
+        <div class="no-data">
+            📊 Add some expenses to see your spending breakdown.
+        </div>
+    `;
+
+} else {
+
+    const maxAmount = Math.max(
+        ...categories.map(item => item[1])
+    );
+
+
+    categories.forEach(([category, amount]) => {
+
+        const percentage =
+            (amount / maxAmount) * 100;
+
+
+        const row =
+            document.createElement("div");
+
+        row.className = "chart-row";
+
+
+        row.innerHTML = `
+            <div class="chart-label">
+
+                <span>${category}</span>
+
+                <span>₹${amount.toFixed(2)}</span>
+
+            </div>
+
+            <div class="bar-background">
+
+                <div
+                    class="bar"
+                    style="width: ${percentage}%"
+                ></div>
+
+            </div>
+        `;
+
+
+        chart.appendChild(row);
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>
