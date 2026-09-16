@@ -1,6 +1,6 @@
  💸 Spendly - Expense Tracker
 
-A modern web-based expense tracker built using Python Flask, SQLite, HTML, CSS and JavaScript.
+A web-based expense tracker built with Python Flask and SQLite.
 
  🚀 Live Demo
 
@@ -8,18 +8,16 @@ A modern web-based expense tracker built using Python Flask, SQLite, HTML, CSS a
 
  ✨ Features
 
-- Add expenses
-- Edit expenses
-- Delete expenses
+- Add, edit and delete expenses
 - Track total spending
 - Category-wise spending
 - Search and filter expenses
 - Spending overview chart
 - Date tracking
 - Dark mode
-- Responsive UI
+- Responsive design
 
- 🛠️ Technologies
+🛠️ Tech Stack
 
 - Python
 - Flask
@@ -27,3 +25,21 @@ A modern web-based expense tracker built using Python Flask, SQLite, HTML, CSS a
 - HTML
 - CSS
 - JavaScript
+
+ 📂 Project Structure
+
+expense-tracker/
+├── app.py
+├── requirements.txt
+├── Procfile
+├── templates/
+│   ├── index.html
+│   └── edit.html
+└── static/
+    └── style.css
+
+ ▶️ Run Locally
+
+```bash
+pip install -r requirements.txt
+python app.py
